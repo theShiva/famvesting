@@ -1,0 +1,63 @@
+﻿@model SingleFamProperties.ViewModels.PropertiesPageViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Saved Investment Properties</h2>
+
+<table class="table">
+    <tr>
+        <th> 
+            Property Id
+        </th>
+        <th>
+            Full Address
+        </th>
+        <th>
+            Year Built
+        </th>
+        <th>
+            List Price ($)
+        </th>
+        <th>
+            Monthly Rent ($)
+        </th>
+        <th>
+            Gross Yield (%)
+        </th>
+        <th>Action</th>
+    </tr>
+
+@foreach (var item in Model.Properties) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FullAddress)
+        </td>
+        <td>
+            @if (item.YearBuilt != 0)
+            { @Html.DisplayFor(modelItem => item.YearBuilt) }
+        </td>
+        <td>
+            @if (item.ListPrice != 0)
+            { @Html.DisplayFor(modelItem => item.ListPrice) }
+        </td>
+        <td>
+            @if (item.MonthlyRent != 0)
+            { @Html.DisplayFor(modelItem => item.MonthlyRent) }
+        </td>
+        <td>
+            @if (item.GrossYield != 0)
+            { @Html.DisplayFor(modelItem => item.GrossYield) }
+        </td>
+        <td>
+            @* TODO Implement DELETE
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
+        </td>
+    </tr>
+}
+
+</table>

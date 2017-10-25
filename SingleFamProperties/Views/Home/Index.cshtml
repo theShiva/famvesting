@@ -1,0 +1,126 @@
+﻿@model SingleFamProperties.ViewModels.HomePageViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Just listed Homes!</h1>
+    <p class="lead">These single family homes were just listed! Snatch them up before they are gone!</p>
+</div>
+
+<table class="table table-striped">
+<tr>
+    <th> 
+        Property Id
+    </th>
+    <th>
+        Full Address
+    </th>
+    <th>
+        Year Built
+    </th>
+    <th>
+        List Price ($)
+    </th>
+    <th>
+        Monthly Rent ($)
+    </th>
+    <th>
+        Gross Yield (%)
+    </th>
+    <th>
+        Action
+    </th>
+    <th></th>
+</tr>
+
+@foreach (var item in Model.Properties) {
+    <tr data-id="@item.Id" data-full-address="@item.FullAddress" data-year-built="@item.YearBuilt" data-list-price="@item.ListPrice" data-monthly-rent="@item.MonthlyRent" data-gross-yield="@item.GrossYield">
+        <td>
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FullAddress)
+        </td>
+        <td>
+            @if (item.YearBuilt != 0) { @Html.DisplayFor(modelItem => item.YearBuilt) } 
+        </td>
+        <td>
+            @if (item.ListPrice != 0) { @Html.DisplayFor(modelItem => item.ListPrice) }
+        </td>
+        <td>
+            @if (item.MonthlyRent != 0) { @Html.DisplayFor(modelItem => item.MonthlyRent) }
+        </td>
+        <td>
+            @if (item.GrossYield != 0) { @Html.DisplayFor(modelItem => item.GrossYield) }
+        </td>
+        <td>
+            <button type="button" class="btn btn-primary save-property">Save</button>
+        </td>
+    </tr>
+}
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $('.save-property').click(function (e) {
+
+                var saveButton = $(e.target);
+
+                var $row = $(this).parents('tr');
+
+                var id = $row.data('id');
+                var fullAddress = $row.data('full-address');
+                var yearBuilt = $row.data('year-built');
+                var listPrice = $row.data('list-price');
+                var monthlyRent = $row.data('monthly-rent');
+                var grossYield = $row.data('gross-yield');
+
+                //alert('Values: \r\n' + 
+                //        'ID: ' + id + '\n' +
+                //        'Full Address: ' + fullAddress + '\n' +
+                //        'Year Built: ' + yearBuilt + '\n' +
+                //        'List Price: ' + listPrice + '\n' +
+                //        'Monthly Rent: ' + monthlyRent + '\n'
+                //);
+
+                var propertyJson = JSON.stringify({
+                    id: id,
+                    fullAddress: fullAddress,
+                    yearBuilt: yearBuilt,
+                    listPrice: listPrice,
+                    monthlyRent: monthlyRent,
+                    grossYield: grossYield
+                });
+
+                console.log(propertyJson);
+                // alert('JSON: \r\n' + propertyJson);
+
+                $.ajax({
+                    url: "/properties/save",
+                    type: "POST",
+                    data: propertyJson,
+                    contentType: "application/json",
+                    success: function () {
+
+                        saveButton
+                            .unbind('click')
+                            .removeClass("btn-primary")
+                            .addClass("btn-outline-success")
+                            .text("Saved!");
+
+                        console.log("Successfully created new PROPERTY!!!!");
+                        // $('.js-notifications-count').text("").hide();
+                    },
+                    statusCode: {
+                        404: function (content) { alert('An error occurred. 404 - Resource Not Found!'); },
+                        500: function (content) { alert('An error occurred. 500 - Internal Server Error'); }
+                    }
+                });
+            });
+        });
+    </script>
+}
